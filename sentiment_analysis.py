@@ -11,6 +11,7 @@ from PIL import Image
 import PIL.ImageOps
 from wordcloud import ImageColorGenerator
 from nltk.tokenize.treebank import TreebankWordDetokenizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 warnings.filterwarnings('ignore')
 
@@ -62,6 +63,8 @@ def wordcloud(words):
     # plt.axis("off")
     # plt.show()
     
+def vectorization(words):
+    ve
 
 
 
