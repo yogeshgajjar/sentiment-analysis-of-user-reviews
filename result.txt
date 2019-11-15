@@ -1,0 +1,34 @@
+Preprocessing methods for Sentiment Analysis
+
+1) Tokanization using NLTK library. 
+It means three things 
+- Break the sentence into words 
+- Understand the importance of each word 
+- Produce structural description 
+
+2) Bigrams, Trigrams and Ngrams 
+Representation of words in pairs, three words and N words. 
+
+syntax = quotes_ngrams = list(ntlk.ngrams(quotes_tokens, N)) 
+
+3) Stemming 
+Refers to normalizing into its base form or root form 
+from ntlk.stem import PorterStemmer 
+pst = PorterStemmer() 
+
+pst.stem("having") 
+
+4) Lemmatization 
+Similar to stemming as it maps several words into common words 
+Better than stemming 
+from nltk.stem import wordnet
+from ntlk.stem import WordnetLematizer
+word_len = Wordnet.Lemmatizzer()
+
+5) Stopwords 
+words not required in NLP such as I, am, the etc 
+
+6) Parts of Speech 
+- A tag which catagorizes the words of the sentence
+tokanize it, and apply nltk.pos_tag([token])
+I went and saw this movie last night after being coaxed to by a few friends of mine. I'll admit that I was reluctant to see it because from what I knew of Ashton Kutcher he was only able to do comedy. I was wrong. Kutcher played the character of Jake Fischer very well, and Kevin Costner played Ben Randall with such professionalism. The sign of a good movie is that it can toy with our emotions. This one did exactly that. The entire theater (which was sold out) was overcome by laughter during the first half of the movie, and were moved to tears during the second half. While exiting the theater I not only saw many women in tears, but many full grown men as well, trying desperately not to let anyone see them crying. This movie was great, and I suggest that you go see it before you judge.
