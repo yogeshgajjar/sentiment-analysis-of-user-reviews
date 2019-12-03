@@ -316,6 +316,12 @@ def logisticRegression(X_train, X_test, y_train, y_test):
     base_model.fit(X_train, y_train) 
     # print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 1695a7af170f650bad343b66318eaf4485940b5b
     y_pred_train = classifier.predict(X_train)
     y_pred_test = classifier.predict(X_test)
     train_score = 1 - accuracy_score(y_train, y_pred_train)  # Calculating train error 
