@@ -22,6 +22,7 @@ from sklearn.utils import shuffle
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 import sys
+import pickle
 warnings.filterwarnings('ignore')
 
 
@@ -224,6 +225,7 @@ def tfidfVectorization(df, target):
         words = [stemmer.lemmatize(word) for word in words]
         doc = ' '.join(words)
         word_list.append(doc) 
+    wordcloud(word_list)
 
     if target == 1:
         tfidfconv = TfidfVectorizer(lowercase=True, stop_words=stopwords.words('english'))
@@ -269,16 +271,28 @@ def tfidfVectorization(df, target):
 # #     print(y_test.shape) 
 #     return X_train, X_test, y_train, y_test
 
-# def wordcloud(words):
-#     words_string = TreebankWordDetokenizer().detokenize(words)
-#     char_mask = np.array(Image.open("/home/yogesh/Git/sentiment_analysis/image.jpg"))    
-#     image_colors = ImageColorGenerator(char_mask)
-#     wordcloud = WordCloud(background_color="black", max_words=200, width=400, height=400, mask=char_mask, random_state=1).generate(words_string)
+def wordcloud(words):
+    words_string = TreebankWordDetokenizer().detokenize(words)
+    char_mask = np.array(Image.open("/home/yogesh/Git/sentiment_analysis/image.jpg"))    
+    image_colors = ImageColorGenerator(char_mask)
+    wordcloud = WordCloud(background_color="black", max_words=200, width=400, height=400, mask=char_mask, random_state=1).generate(words_string)
 
-#     fig = plt.figure(1, figsize=(12,12))
-#     plt.imshow(wordcloud.recolor(color_func=image_colors))
-#     plt.axis("off")
-#     plt.show()
+    fig = plt.figure(1, figsize=(12,12))
+    plt.imshow(wordcloud.recolor(color_func=image_colors))
+    plt.axis("off")
+    plt.show()
+
+def evaluate(model, test_features, test_labels):
+    predictions = model.predict(test_features)
+    errors = abs(predictions - test_labels)
+    mape = 100 * np.mean(errors / test_labels)
+    accuracy = 100 - mape
+    print('Model Performance')
+    print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
+    print('Accuracy = {:0.2f}%.'.format(accuracy))
+    
+    return accuracy
+
 
 def logisticRegression(X_train, X_test, y_train, y_test):
 
@@ -297,16 +311,23 @@ def logisticRegression(X_train, X_test, y_train, y_test):
     
     classifier = GridSearchCV(mod_lr, parameters, cv=5)  # gridsearchCV with 5 fold CV
     classifier.fit(X_train, y_train)
-       
+    
+    base_model = LogisticRegression() 
+    base_model.fit(X_train, y_train) 
+    # print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+
     y_pred_train = classifier.predict(X_train)
     y_pred_test = classifier.predict(X_test)
     train_score = 1 - accuracy_score(y_train, y_pred_train)  # Calculating train error 
     test_score = 1 - accuracy_score(y_test, y_pred_test) # Calculating test error 
+    filename = 'logistic_regression.sav'
+    pickle.dump(classifier, open(filename, 'wb'))
+    filename = 'logistic_regression_base.sav'
+    pickle.dump(base_model, open(filename, 'wb'))
 
     print("=======================================================================================")
     print("-------------------- LOGISTIC REGRESSION ------------------------\n") 
-    print("------ TRAIN AND TEST ERRORS -------")
-    print(" ")
+    print("------ TRAIN AND TEST ERRORS -------\n")
     print("TRAIN ERROR : ", 1-train_score)
     print("TEST ERROR : ", 1-test_score)
     print(" ")
@@ -316,6 +337,10 @@ def logisticRegression(X_train, X_test, y_train, y_test):
     print(classification_report(y_test,y_pred_test))
     print("-------- ACCURACY SCORE -----------\n") 
     print(accuracy_score(y_test, y_pred_test))
+    print(" ")
+    print("-------- BASE MODEL ACCURACY--------\n")
+    print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+    print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, classifier.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print("=======================================================================================")
 
 
@@ -330,14 +355,29 @@ def randomForest(X_train, X_test, y_train, y_test):
     :param y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
     :param y_test: Dataframe containing test labels for a particular configurations specified in terminal.
     """
+    # parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 1000, num = 5)]}
+    # mod_rf = RandomForestClassifier()
+    # classifier = GridSearchCV(estimator = mod_rf, param_grid = parameters, cv=5)  # gridsearchCV with 5 fold CV
+    # classifier.fit(X_train, y_train)
 
-    classifier = RandomForestClassifier(n_estimators=1000, random_state=0)
+
+    classifier = RandomForestClassifier(n_estimators=500, random_state=0)
     classifier.fit(X_train, y_train) 
 
+    base_model = RandomForestClassifier() 
+    base_model.fit(X_train, y_train) 
+    # print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+
+    
     y_pred_train = classifier.predict(X_train)
     y_pred_test = classifier.predict(X_test)
     train_score = 1 - accuracy_score(y_train, y_pred_train)  # Calculating train error 
     test_score = 1 - accuracy_score(y_test, y_pred_test)
+
+    filename = 'random_forest.sav'
+    pickle.dump(classifier, open(filename, 'wb'))
+    filename = 'random_forest_base.sav'
+    pickle.dump(base_model, open(filename, 'wb'))
 
     print("=======================================================================================")
     print("-------------------- RANDOM FOREST ------------------------\n") 
@@ -351,6 +391,9 @@ def randomForest(X_train, X_test, y_train, y_test):
     print(classification_report(y_test,y_pred_test))
     print("-------- ACCURACY SCORE -----------") 
     print("Accuracy is: ", accuracy_score(y_test, y_pred_test))
+    print("-------- BASE MODEL ACCURACY--------\n")
+    print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+    print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, classifier.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print("=======================================================================================")
 
 def linearSvm(X_train, X_test, y_train, y_test):
@@ -370,12 +413,22 @@ def linearSvm(X_train, X_test, y_train, y_test):
  
     svc = LinearSVC(penalty='l2', loss='squared_hinge', dual = False, C = classifier.best_params_.get('C'))
     svc.fit(X_train, y_train)
-    y_pred = svc.predict(X_test)
+    # y_pred = svc.predict(X_test)
+
+    base_model = LinearSVC() 
+    base_model.fit(X_train, y_train) 
+    # print("Base model accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+
 
     y_pred_train = svc.predict(X_train)
     y_pred_test = svc.predict(X_test)
     train_score = 1 - accuracy_score(y_train, y_pred_train)  # Calculating train error 
     test_score = 1 - accuracy_score(y_test, y_pred_test)
+
+    filename = 'linear_svm.sav'
+    pickle.dump(classifier, open(filename, 'wb'))
+    filename = 'linear_svm_base.sav'
+    pickle.dump(base_model, open(filename, 'wb'))
 
     print("=======================================================================================")
     print("-------------------- LINEAR SVM ------------------------\n") 
@@ -392,6 +445,9 @@ def linearSvm(X_train, X_test, y_train, y_test):
     print(classification_report(y_test,y_pred_test))
     print("-------- ACCURACY SCORE -----------") 
     print("Accuracy is: ", accuracy_score(y_test, y_pred_test))
+    print("-------- BASE MODEL ACCURACY--------\n")
+    print("Base model accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+    print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, svc.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print("=======================================================================================")
 
 def rbfSvm(X_train, X_test, y_train, y_test):
@@ -404,10 +460,19 @@ def rbfSvm(X_train, X_test, y_train, y_test):
     estimator = SVC(C = 1000, kernel = 'rbf') 
     estimator.fit(X_train, y_train)
 
+    base_model = SVC(kernel = 'rbf') 
+    base_model.fit(X_train, y_train) 
+    # print("Base model accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+
     y_pred_train = estimator.predict(X_train)
     y_pred_test = estimator.predict(X_test)
     train_score = 1 - accuracy_score(y_train, y_pred_train)  # Calculating train error 
     test_score = 1 - accuracy_score(y_test, y_pred_test)
+
+    filename = 'rbf_svm.sav'
+    pickle.dump(estimator, open(filename, 'wb'))
+    filename = 'rbf_svm_base.sav'
+    pickle.dump(base_model, open(filename, 'wb'))
 
     print("=======================================================================================")
     print("-------------------- RBF SVM ------------------------\n") 
@@ -424,17 +489,8 @@ def rbfSvm(X_train, X_test, y_train, y_test):
     print(classification_report(y_test,y_pred_test))
     print("-------- ACCURACY SCORE -----------") 
     print("Accuracy is: ", accuracy_score(y_test, y_pred_test))
+    print("-------- BASE MODEL ACCURACY--------\n")
+    print("Base model accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
+    print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, estimator.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
+    print(" ")
     print("=======================================================================================")
-
-
-def main():
-    df_uci, df_imdb_train, df_imdb_test = uciData(), imdbData()[0], imdbData()[1]
-    X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test)
-    logisticRegression(X_train, X_test, y_train, y_test)
-    randomForest(X_train, X_test, y_train, y_test)
-    linearSvm(X_train, X_test, y_train, y_test)
-    rbfSvm(X_train, X_test, y_train, y_test)
-
-
-if __name__ == "__main__":
-    main()
