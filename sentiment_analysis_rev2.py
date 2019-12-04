@@ -345,7 +345,7 @@ def logisticRegression(X_train, X_test, y_train, y_test):
     print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
     print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, classifier.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print("=======================================================================================")
-
+    # return classifier, base_model
 
 
 def randomForest(X_train, X_test, y_train, y_test):
@@ -398,6 +398,7 @@ def randomForest(X_train, X_test, y_train, y_test):
     print("Base Model Accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
     print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, classifier.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print("=======================================================================================")
+    # return classifier, base_model
 
 def linearSvm(X_train, X_test, y_train, y_test):
 
@@ -452,6 +453,7 @@ def linearSvm(X_train, X_test, y_train, y_test):
     print("Base model accuracy: ", accuracy_score(y_test, base_model.predict(X_test)))
     print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, svc.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print("=======================================================================================")
+    # return classifier, base_model
 
 def rbfSvm(X_train, X_test, y_train, y_test):
     # parameters = {'C': np.logspace(-2,3,6)}
@@ -471,6 +473,7 @@ def rbfSvm(X_train, X_test, y_train, y_test):
     y_pred_test = estimator.predict(X_test)
     train_score = 1 - accuracy_score(y_train, y_pred_train)  # Calculating train error 
     test_score = 1 - accuracy_score(y_test, y_pred_test)
+
 
     filename = 'rbf_svm.sav'
     pickle.dump(estimator, open(filename, 'wb'))
@@ -497,3 +500,4 @@ def rbfSvm(X_train, X_test, y_train, y_test):
     print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, estimator.predict(X_test)) - accuracy_score(y_test, base_model.predict(X_test))) / accuracy_score(y_test, base_model.predict(X_test))))
     print(" ")
     print("=======================================================================================")
+    # return estimator, base_model
