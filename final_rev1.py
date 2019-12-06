@@ -91,7 +91,7 @@ def imdbData():
 def datasetSelection(df_uci, df_imdb_train, df_imdb_test, target):
    
     """
-    Different configuration for train/test of the dataset based on the user defined number. 
+    Different configuration for train/test of the dataset based on the user defined number(param: target). 
     Total of 6 different configuration which includes - 
         1. TRAIN AND TEST ON OVERALL DATASET INCLUDING IMDB AND UCI DATASET
         2. TRAIN AND TEST ON UCI DATASET
@@ -99,9 +99,12 @@ def datasetSelection(df_uci, df_imdb_train, df_imdb_test, target):
         4. TRAIN AND TEST ON IMDB DATASET
         5. TRAIN ON 100% IMDB + 80% UCI DATASET AND TEST ON 20% UCI DATASET
         6. TRAIN ON 100% UCI + 80% IMDB DATASET AND TEST ON 20% IMDB DATASET
-    :param df_uci = Dataframe of UCI dataset with columns "review"(user review) and "sentiment"(label either positive or negative). 
-    :param df_imdb_train = Dataframe of IMDB train dataset with only column "review"(user review). 
-    :param df_imdb_test = Dataframe of IMDB test dataset with only column "review"(user review). 
+
+    :param df_uci: Dataframe of UCI dataset with columns "review"(user review) and "sentiment"(label either positive or negative). 
+    :param df_imdb_train: Dataframe of IMDB train dataset with only column "review"(user review). 
+    :param df_imdb_test: Dataframe of IMDB test dataset with only column "review"(user review).
+    :param target: Target is an interger value represeting the configuration value. 
+
     :returns X_train: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal.  
     :returns X_test: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
     :returns y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
@@ -109,55 +112,50 @@ def datasetSelection(df_uci, df_imdb_train, df_imdb_test, target):
     """
 
     if target == 1:
-        print("TRAIN AND TEST ON OVERALL DATASET INCLUDING IMDB AND UCI DATASET")
+        print("TRAIN AND TEST ON OVERALL DATASET INCLUDING IMDB AND UCI DATASET\n")
         df_train_data = pd.concat([pd.DataFrame(df_uci['reviews']), df_imdb_train, df_imdb_test], axis=0)
         y = pd.concat([pd.DataFrame(df_uci['sentiment']), pd.DataFrame([1 if i < 12500 else 0 for i in range(25000)], columns=['sentiment']), pd.DataFrame([1 if i < 12500 else 0 for i in range(25000)], columns=['sentiment'])])    
         X = tfidfVectorization(df_train_data, 1) 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
         y_train['sentiment'], y_test['sentiment'] = y_train.sentiment.astype(float), y_test.sentiment.astype(float)
          
     elif target == 2:
-        print("TRAIN AND TEST ON UCI DATASET")
+        print("TRAIN AND TEST ON UCI DATASET\n")
         df_train_data = pd.DataFrame(df_uci['reviews'])
         y = pd.DataFrame(df_uci['sentiment'])
         X = tfidfVectorization(df_train_data, 1) 
-        # y = y['sentiment'].to_numpy()
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
 
     elif target == 3:
-        print("TRAIN ON IMDB DATASET AND TEST ON UCI DATASET")
+        print("TRAIN ON IMDB DATASET AND TEST ON UCI DATASET\n")
         df_train_data, df_test_data = shuffle(pd.concat([df_imdb_train, df_imdb_test]), random_state = 7), shuffle(pd.DataFrame(df_uci['reviews']), random_state = 7)
         y_train, y_test = shuffle(pd.concat([pd.DataFrame([1 if i < 12500 else 0 for i in range(25000)], columns=['sentiment']), pd.DataFrame([1 if i < 12500 else 0 for i in range(25000)], columns=['sentiment'])]), random_state = 7), shuffle(pd.DataFrame(df_uci['sentiment'], columns=['sentiment']), random_state = 7)
         y_train['sentiment'], y_test['sentiment'] = y_train.sentiment.astype(float), y_test.sentiment.astype(float)
         X_train, X_test = tfidfVectorization(df_train_data, 2), tfidfVectorization(df_test_data, 2)
 
     elif target == 4:
-        print("TRAIN AND TEST ON IMDB DATASET")
+        print("TRAIN AND TEST ON IMDB DATASET\n")
         y_train, y_test = shuffle(pd.DataFrame([1 if i < 12500 else 0 for i in range(25000)], columns=['sentiment']), random_state = 7), shuffle(pd.DataFrame([1 if i < 12500 else 0 for i in range(25000)], columns=['sentiment']), random_state = 7)
         df_imdb_train, df_imdb_test = shuffle(df_imdb_train, random_state = 7), shuffle(df_imdb_test, random_state = 7)
         X_train, X_test = tfidfVectorization(df_imdb_train, 1), tfidfVectorization(df_imdb_test, 1)
         
     elif target == 5:
-        print("TRAIN ON 100% IMDB + 80% UCI DATASET AND TEST ON 20% UCI DATASET")
+        print("TRAIN ON 100% IMDB + 80% UCI DATASET AND TEST ON 20% UCI DATASET\n")
         df_train_data, df_test_data, y_train, y_test = splitTrain(df_uci, df_imdb_test, df_imdb_train, 1)
         y_train['sentiment'] = y_train.sentiment.astype(float)
         y_test['sentiment'] = y_test.sentiment.astype(float)
         X_train, X_test = tfidfVectorization(df_train_data, 3), tfidfVectorization(df_test_data, 3)
 
-
     elif target == 6:
-        print("TRAIN ON 100% UCI + 80% IMDB DATASET AND TEST ON 20% IMDB DATASET")
+        print("TRAIN ON 100% UCI + 80% IMDB DATASET AND TEST ON 20% IMDB DATASET\n")
         df_train_data, df_test_data, y_train, y_test = splitTrain(df_uci, df_imdb_test, df_imdb_train, 2)
         y_train['sentiment'] = y_train.sentiment.astype(float)
         y_test['sentiment'] = y_test.sentiment.astype(float)
         X_train, X_test = tfidfVectorization(df_train_data, 4), tfidfVectorization(df_test_data, 4)
 
     else:
-        print("done")
-    # print(X_train.shape)
-    # print(X_test.shape)
-    # print(y_test.shape)
-    # print(y_train.shape) 
+        print("Press a valid configuration number from 1 to 6")
+
     return X_train, X_test, y_train, y_test
 
 def splitTrain(df_uci, df_imdb_test, df_imdb_train, target):
@@ -232,33 +230,10 @@ def tfidfVectorization(df, target):
         tfidfconv = TfidfVectorizer(lowercase=True, stop_words=stopwords.words('english'), max_features= 31366)
         X = tfidfconv.fit_transform(word_list)
 
-
     else:
         print("done") 
 
     return X
-
-# def testtrainSplit(X, y):
-
-#     """
-#     Splitting the entire dataset into separate test and train dataset
-
-#     :param X: Feature vector of type 
-#     :param y: Labels of particular dataset as per the configuration. 
-
-#     :returns df_train_data: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
-#     :returns df_test_data: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
-#     :returns y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
-#     :returns y_test: Dataframe containing test labels for a particular configurations specified in terminal. 
-#     """
-
-#     y = y['sentiment'].to_numpy()
-#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-# #     print(X_train.shape)
-# #     print(type(X_test))
-# #     print(y_train.shape)
-# #     print(y_test.shape) 
-#     return X_train, X_test, y_train, y_test
 
 def wordcloud(words):
     words_string = TreebankWordDetokenizer().detokenize(words)
@@ -270,17 +245,6 @@ def wordcloud(words):
     plt.imshow(wordcloud.recolor(color_func=image_colors))
     plt.axis("off")
     plt.show()
-
-def evaluate(model, test_features, test_labels):
-    predictions = model.predict(test_features)
-    errors = abs(predictions - test_labels)
-    mape = 100 * np.mean(errors / test_labels)
-    accuracy = 100 - mape
-    print('Model Performance')
-    print('Average Error: {:0.4f} degrees.'.format(np.mean(errors)))
-    print('Accuracy = {:0.2f}%.'.format(accuracy))
-    
-    return accuracy
 
 def pickleLr(target, classifier, base_model):
     if target == 1:
@@ -324,10 +288,11 @@ def logisticRegression(X_train, X_test, y_train, y_test, target):
     """
     Logistic Regression model with regularization coefficient calculated using GridSearchCV and K-Fold CV = 5. 
 
-    :param df_train_data: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
-    :param df_test_data: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_train: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_test: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
     :param y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
     :param y_test: Dataframe containing test labels for a particular configurations specified in terminal.
+    :param target: Target is an integer value denoting which configuration number. 
     """
 
     parameters = {'C': np.logspace(-2,3,6)}
@@ -401,10 +366,11 @@ def randomForest(X_train, X_test, y_train, y_test, target):
     """
     Random Forest model.  
 
-    :param df_train_data: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
-    :param df_test_data: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_train: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_test: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
     :param y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
     :param y_test: Dataframe containing test labels for a particular configurations specified in terminal.
+    :param target: Target is an integer value denoting which configuration number. 
     """
     # parameters = {'n_estimators': [int(x) for x in np.linspace(start = 10, stop = 1000, num = 5)]}
     # mod_rf = RandomForestClassifier()
@@ -479,10 +445,12 @@ def linearSvm(X_train, X_test, y_train, y_test, target):
     """
     Linear SVM model with regularization coefficient calculated using GridSearchCV and K-Fold CV = 5. 
 
-    :param df_train_data: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
-    :param df_test_data: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_train: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_test: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
     :param y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
     :param y_test: Dataframe containing test labels for a particular configurations specified in terminal.
+    :param target: Target is an integer value denoting which configuration number. 
+
     """
     
     parameters = {'C': np.logspace(-2,3,6)}
@@ -563,6 +531,19 @@ def pickleRbf(target, classifier, base_model):
 
 
 def rbfSvm(X_train, X_test, y_train, y_test, target):
+
+    """
+    Radial Basis Function SVM model with C=1000. 
+
+    :param X_train: Dataframe containing train samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param X_test: Dataframe containing test samples with features extracted from TfidfVectorizer for a particular configurations specified in terminal. 
+    :param y_train: Dataframe containing train labels for a particular configurations specified in terminal. 
+    :param y_test: Dataframe containing test labels for a particular configurations specified in terminal.
+    :param target: Target is an integer value denoting which configuration number. 
+
+    """
+
+
     # parameters = {'C': np.logspace(-2,3,6)}
     # #parameters = {'C': np.linspace(0.1, 100, 100), 'gamma': np.linspace(0.05,0.1,2), , 'gamma': np.logspace(0.05,2)}
  
@@ -596,95 +577,3 @@ def rbfSvm(X_train, X_test, y_train, y_test, target):
     print("=======================================================================================")
     #   return estimator, base_model
 
-def main():
-    df_uci, df_imdb_train, df_imdb_test = uciData(), imdbData()[0], imdbData()[1]
-
-    if sys.argv[1] == '1':
-        X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test,1)
-        logisticRegression(X_train, X_test, y_train, y_test, 1)
-        randomForest(X_train, X_test, y_train, y_test, 1)
-        linearSvm(X_train, X_test, y_train, y_test, 1)
-        rbfSvm(X_train, X_test, y_train, y_test, 1)
-
-    if sys.argv[1] == '2':
-        X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test,2)
-        # logisticRegression(X_train, X_test, y_train, y_test, 2)
-        logistic_regression = pickle.load(open('lr_2.sav', 'rb'))
-
-        print("Accuracy is :",logistic_regression.score(X_test, y_test))
-        logistic_regression_base = pickle.load(open('lr_base_2.sav', 'rb'))
-        print("Base Accuracy is :",logistic_regression_base.score(X_test, y_test))
-        print('Improvement of {:0.2f}%.'.format(( logistic_regression.score(X_test, y_test)- logistic_regression_base.score(X_test, y_test)) / logistic_regression_base.score(X_test, y_test)))
-        print("=========================================\n\n")
-        # print("=======================================================================================")
-        # print("-------------------- LOGISTIC REGRESSION ------------------------\n") 
-        # print("------ TRAIN AND TEST ERRORS -------\n")
-        # print("TRAIN ERROR : ", accuracy_score(y_train, logistic_regression.predict(X_train)))
-        # print("TEST ERROR : ", accuracy_score(y_test, logistic_regression.predict(X_test)))
-        # print(" ")
-        # print("-------- CONFUSION MATRIX ----------\n") 
-        # print(confusion_matrix(y_test,logistic_regression.predict(X_test)))
-        # print("------ CLASSIFICATION REPORT -------\n") 
-        # print(classification_report(y_test,logistic_regression.predict(X_test)))
-        # print("-------- ACCURACY SCORE -----------\n") 
-        # print(accuracy_score(y_test, logistic_regression.predict(X_test)))
-        # print(" ")
-        # print("-------- BASE MODEL ACCURACY--------\n")
-        # print("Base Model Accuracy: ", accuracy_score(y_test, logistic_regression_base.predict(X_test)))
-        # print('Improvement of {:0.2f}%.'.format((accuracy_score(y_test, logistic_regression.predict(X_test)) - accuracy_score(y_test, logistic_regression_base.predict(X_test))) / accuracy_score(y_test, logistic_regression_base.predict(X_test))))
-        # print("=======================================================================================")
-
-        # randomForest(X_train, X_test, y_train, y_test, 2)
-        random_forest = pickle.load(open('rf_2.sav', 'rb'))
-        print("Accuracy is :",random_forest.score(X_test, y_test))
-        random_forest_base = pickle.load(open('rf_base_2.sav', 'rb'))
-        print("Base Accuracy is :",random_forest_base.score(X_test, y_test))
-        print('Improvement of {:0.2f}%.'.format(( random_forest.score(X_test, y_test)- random_forest_base.score(X_test, y_test)) / random_forest_base.score(X_test, y_test)))
-        print("=========================================\n\n")
-
-        # linearSvm(X_train, X_test, y_train, y_test, 2)
-        linear_svm = pickle.load(open('svm_2.sav', 'rb'))
-        print("Accuracy is :",linear_svm.score(X_test, y_test))
-        linear_svm_base = pickle.load(open('svm_base_2.sav', 'rb'))
-        print("Base Accuracy is :",linear_svm_base.score(X_test, y_test))
-        print('Improvement of {:0.2f}%.'.format(( linear_svm.score(X_test, y_test)- linear_svm_base.score(X_test, y_test)) / linear_svm_base.score(X_test, y_test)))
-        print("=========================================\n\n")
-
-        # rbfSvm(X_train, X_test, y_train, y_test, 2)
-        rbf_svm = pickle.load(open('rbf_2.sav', 'rb'))
-        print("Accuracy is :",rbf_svm.score(X_test, y_test))
-        rbf_svm_base = pickle.load(open('rbf_base_2.sav', 'rb'))
-        print("Base Accuracy is :",rbf_svm_base.score(X_test, y_test))
-        print('Improvement of {:0.2f}%.'.format(( rbf_svm.score(X_test, y_test)- rbf_svm_base.score(X_test, y_test)) / rbf_svm_base.score(X_test, y_test)))
-        print("=========================================\n\n")
-
-    if sys.argv[1] == '3':
-        X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test,3)
-        logisticRegression(X_train, X_test, y_train, y_test, 3)
-        randomForest(X_train, X_test, y_train, y_test, 3)
-        linearSvm(X_train, X_test, y_train, y_test, 3)
-        rbfSvm(X_train, X_test, y_train, y_test, 3)
-
-    if sys.argv[1] == '4':
-        X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test,4)
-        logisticRegression(X_train, X_test, y_train, y_test, 4)
-        randomForest(X_train, X_test, y_train, y_test, 4)
-        linearSvm(X_train, X_test, y_train, y_test, 4)
-        rbfSvm(X_train, X_test, y_train, y_test, 4)
-
-    if sys.argv[1] == '5':
-        X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test,5)
-        logisticRegression(X_train, X_test, y_train, y_test, 5)
-        randomForest(X_train, X_test, y_train, y_test, 5)
-        linearSvm(X_train, X_test, y_train, y_test, 5)
-        rbfSvm(X_train, X_test, y_train, y_test, 5)
-
-    if sys.argv[1] == '6':
-        X_train, X_test, y_train, y_test = datasetSelection(df_uci, df_imdb_train, df_imdb_test,6)
-        logisticRegression(X_train, X_test, y_train, y_test, 6)
-        randomForest(X_train, X_test, y_train, y_test, 6)
-        linearSvm(X_train, X_test, y_train, y_test, 6)
-        rbfSvm(X_train, X_test, y_train, y_test, 6)
-
-if __name__ == "__main__":
-        main()
