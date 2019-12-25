@@ -17,3 +17,6 @@ The configurations are:
 4. Train and Test in B
 5. Train on 100% B + 80% A and Test on 20% A
 6. Train on 100% A + 80% B and Test on 20% B 
+
+## Instructions to run the code 
+
