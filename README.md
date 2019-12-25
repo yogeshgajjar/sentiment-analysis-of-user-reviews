@@ -32,9 +32,10 @@ python3 main.py "path_of_dataset"
 
 ## Results 
 
-| Configuration        | Logistic Regression          | Random Forest  | 
+| Configurations     | Model | Logistic Regression          | Random Forest  | 
 | ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| Config 1     | right-aligned | $1600 |
+| Config 2    | centered      |   $12 |
+| Config 3     | are neat      |    $1 |
+| Config 4 | 
 
