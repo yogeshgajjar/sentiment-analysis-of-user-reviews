@@ -32,7 +32,7 @@ python3 main.py "path_of_dataset"
 
 ## Results 
 
-| Configuration        | Logistic Regression          | Random Forest  | Linear SVM | Radial Basis Function SVM    
+| Configuration        | Logistic Regression          | Random Forest  | 
 | ------------- |:-------------:| -----:|
 | col 3 is      | right-aligned | $1600 |
 | col 2 is      | centered      |   $12 |
