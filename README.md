@@ -27,10 +27,14 @@ sh models.sh
 
 2. Execute the `main.py` file 
 ```
-python3 main.py "path of dataset" 
+python3 main.py "path_of_dataset" 
 ``` 
-For example, 
-```
-python3 main.py /home/tars/project/data/
-``` 
+
+## Results 
+
+| Configuration        | Logistic Regression          | Random Forest  | Linear SVM | Radial Basis Function SVM    
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
 
