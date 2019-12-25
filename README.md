@@ -32,10 +32,12 @@ python3 main.py "path_of_dataset"
 
 ## Results 
 
-| Configurations     | Model | Logistic Regression          | Random Forest  | 
-| ------------- |:-------------:| -----:|
-| Config 1     | right-aligned | $1600 |
-| Config 2    | centered      |   $12 |
-| Config 3     | are neat      |    $1 |
-| Config 4 | 
+| Configurations     | Model | Base Model F-1 Score | Best Model F-1 Score  | Best Out-Sample Error | Improvement in Model Performance | 
+| ------------- |:-------------:| -----:|-----:|-----:|-----:|
+| Config 1     | Logistic Regression | 93.79%| 99.28% | 0.0071 | 0.06% |
+| Config 2    | Logistic Regression |  90.00% | 95.93% | 0.0416 | 0.06% |
+| Config 3     | Linear SVM | 49.76% | 49.80% | 0.5020 | 0.001% |
+| Config 4 | Random Forest | 99.27% | 100.00% | 0.000 | 0.01% |
+| Config 5 | Linear SVM | 51.58% | 51.58% | 0.4842 | 0.00% | 
+| Config 6 | Random Forest | 71.18% | 77.98% | 0.2202 | 0.10% |
 
