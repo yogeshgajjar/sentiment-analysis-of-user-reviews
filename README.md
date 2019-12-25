@@ -20,3 +20,17 @@ The configurations are:
 
 ## Instructions to run the code 
 
+1. Download the pre-trained models 
+``` 
+sh models.sh 
+```
+
+2. Execute the `main.py` file 
+```
+python3 main.py "path of dataset" 
+``` 
+For example, 
+```
+python3 main.py /home/tars/project/data/
+``` 
+
