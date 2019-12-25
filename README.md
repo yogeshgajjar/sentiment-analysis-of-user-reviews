@@ -7,6 +7,7 @@ This project aims to solve a binary classification problem that predicts the sen
 53,000 reviews from various sites such as IMDB, Yelp and Amazon and is uniformly distributed into two classes i.e. positive(1) and negative(0). The four different models considered are Logistic Regression, Random Forest, Linear SVM and Complex Kernel Gaussian RBF SVM. The project also compares the performance of all the ML models with six different dataset configurations and finds the best model in terms of out-sample error and F-1 score. The results from this project gives a understanding of how differently two dataset can be used and how the results get affected if the source domain and target domain gets mismatched. 
 
 Dataset A = Sentiment Labelled Sentences Dataset by UCI [UCI] (https://archive.ics.uci.edu/ml/datasets/Sentiment+Labelled+Sentences)
+
 Dataset B = Large Movie Review Dataset by Stanford [Stanford] (https://ai.stanford.edu/~amaas/data/sentiment/)
 
 The configurations are: 
