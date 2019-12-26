@@ -216,7 +216,7 @@ def tfidfVectorization(df, target):
         words = [stemmer.lemmatize(word) for word in words]
         doc = ' '.join(words)
         word_list.append(doc)
-    # wordcloud(word_list)
+    wordcloud(word_list)
 
     if target == 1:
         tfidfconv = TfidfVectorizer(lowercase=True, stop_words=stopwords.words('english'))
