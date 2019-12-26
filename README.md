@@ -1,4 +1,4 @@
-# sentiment_analysis
+# sentiment-analysis
 Sentiment Analysis of User Reviews
 
 ## Abstract 
@@ -28,6 +28,8 @@ sh models.sh
 2. Execute the `main.py` file 
 ```
 python3 main.py "path_of_dataset" 
+For example, 
+python3 main.py /home/tars/project/data/
 ``` 
 
 ## Results 
