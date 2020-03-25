@@ -20,11 +20,11 @@ The configurations are:
 
 ## Instructions to run the code 
 
-1. Download the pre-trained models 
+1. Download the pre-trained models and required dependencies 
 ``` 
 sh models.sh 
+pip3 install -r requirements.txt
 ```
-
 2. Execute the `main.py` file 
 ```
 python3 main.py "path_of_dataset" 
