@@ -1,5 +1,5 @@
 # sentiment-analysis
-Sentiment Analysis of User Reviews
+Sentiment Analysis of User Reviews from Yelp, Amazon and IMDB websites 
 
 ## Abstract 
 
